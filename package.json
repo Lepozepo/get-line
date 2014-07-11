@@ -1,6 +1,6 @@
 {
   "name": "get-line",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "get the specific line in a file.",
   "main": "index.js",
   "scripts": {
