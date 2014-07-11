@@ -77,18 +77,22 @@ GetLine.prototype.countLine = function(arr) {
 		if(arr[i] === '') {
 			// a line
 			this.count++;
+			console.log(this.count)
 			if(this.count === this.lineStart && this.lineStart === 1 && this.lineEnd === undefined) {
 				this.push(arr[i - 1] + this.newline)
 				this.str_arr.push(arr[i - 1] + this.newline)
+				this.end();
 				break;
 			}else if(this.count === this.lineStart && this.lineEnd === undefined && arr[i - 1] === '') {
 				// hit to the start line
 				this.push(arr[i] + this.newline);
 				this.str_arr.push(arr[i] + this.newline);
+				this.end();
 				break;
 			}else if(this.count === this.lineStart && this.lineEnd === undefined && arr[i - 1] !== '') {
 				this.push(arr[i - 1] + this.newline);
 				this.str_arr.push(arr[i - 1] + this.newline);
+				this.end();
 				break;
 			}else if(this.count >= this.lineStart && this.lineEnd !== undefined && this.count <= this.lineEnd && arr[i - 1] === '') {
 				this.push(arr[i] + this.newline);
@@ -97,6 +101,7 @@ GetLine.prototype.countLine = function(arr) {
 				this.push(arr[i - 1] + this.newline);
 				this.str_arr.push(arr[i -1] + this.newline)
 			}else if(this.count > this.lineEnd) {
+				this.end();
 				break;
 			}
 		}
