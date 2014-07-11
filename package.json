@@ -1,7 +1,7 @@
 {
   "name": "get-line",
-  "version": "0.1.1",
-  "description": "get the specific line in a file.",
+  "version": "0.1.2",
+  "description": "Getting a specific line of data or a range of data, and it is a stream.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
