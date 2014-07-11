@@ -1,6 +1,6 @@
 # get-line
 
-Geting a specific line of data or a range of data, and it is a stream. While `get-line` find the range or a specific of data the stream wil end itself, cool :).
+Geting a specific line of data or a range of data, and it is a stream. While `get-line` find the range or a specific of data the stream will end itself, cool :).
 
 ## Install
 
