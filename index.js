@@ -77,7 +77,6 @@ GetLine.prototype.countLine = function(arr) {
 		if(arr[i] === '') {
 			// a line
 			this.count++;
-			console.log(this.count)
 			if(this.count === this.lineStart && this.lineStart === 1 && this.lineEnd === undefined) {
 				this.push(arr[i - 1] + this.newline)
 				this.str_arr.push(arr[i - 1] + this.newline)
