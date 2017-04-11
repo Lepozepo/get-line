@@ -24,7 +24,7 @@ function GetLine (opts, cb) {
 
 	this.cb = cb;
 
-	this.newline = opts.newline || '\n';
+	this.newline = opts.newline || /([^\n]*)/g;
 	this.encode = opts.encoding || 'utf8';
 	this.buffer = '';
 	this.str_arr = [];
@@ -67,7 +67,7 @@ GetLine.prototype._transform = function(chunk, encoding, cb) {
 
 
 GetLine.prototype.breakLine = function(chunk) {
-	var bkl_reg = new RegExp('([^' + this.newline + ']*)','g');
+	var bkl_reg = this.newline;
 	var bkl_result = chunk.match(bkl_reg);
 	return bkl_result;
 }
