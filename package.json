@@ -21,6 +21,6 @@
   },
   "homepage": "https://github.com/chilijung/get-line",
   "dependencies": {
-    "lodash": "^4.17.4",
+    "lodash": "^4.17.4"
   }
 }
