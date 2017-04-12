@@ -1,6 +1,7 @@
 var Transform = require('stream').Transform;
 var fs = require('fs');
 var util = require('util');
+var _ = require('lodash');
 
 util.inherits(GetLine, Transform);
 
@@ -24,22 +25,22 @@ function GetLine (opts, cb) {
 
 	this.cb = cb;
 
-	this.newline = opts.newline || /([^\n]*)/g;
+	this.newline = opts.newline || /\r\n|\n|\r/g;
 	this.encode = opts.encoding || 'utf8';
 	this.buffer = '';
 	this.str_arr = [];
 
-	if(opts.lines && opts.lines[0] && opts.lines[1] && (opts.lines[0] < opts.lines[1])) {
+	if (opts.lines && opts.lines[0] && opts.lines[1] && (opts.lines[0] < opts.lines[1])) {
 		this.lineStart = opts.lines[0];
 		this.lineEnd = opts.lines[1];
-	}else if(opts.lines && opts.lines[0] && opts.lines[1] && (opts.lines[0] > opts.lines[1])){
-		throw new Error("The first line option can't greater then the second.");
-	}else if(opts.lines && opts.lines[0]) {
+	} else if (opts.lines && opts.lines[0] && opts.lines[1] && (opts.lines[0] > opts.lines[1])) {
+		throw new Error('The first line option can\'t be greater than the second.');
+	} else if (opts.lines && opts.lines[0]) {
 		this.lineStart = opts.lines[0];
-	}else if(opts.lines[0] < 1 || opts.lines[1] < 1) {
-		throw new Error("Line range should be greater than 1");
-	}else if(opts.lines[0] === opts.lines[1]) {
-		throw new Error("Line start and end shouldn't be the same.")
+	} else if (opts.lines[0] < 1 || opts.lines[1] < 1) {
+		throw new Error('Line range should be greater than 1');
+	} else if (opts.lines[0] === opts.lines[1]) {
+		throw new Error('Line start and end shouldn\'t be the same.');
 	}
 }
 
@@ -50,14 +51,12 @@ GetLine.prototype._transform = function(chunk, encoding, cb) {
 	}
 	var bk = this.breakLine(chunk);
 
-	// buffer the last value, cause might be an incomplete value.
-	for(var j = bk.length - 1; j >= 0; j--) {
-		if(bk[j]) {
-			// if have value
-			this.buffer = bk[j];
-			bk.splice(j, bk.length - 1);
-			break;
-		}
+	// store the last value if it is incomplete
+	var lastValueIsIncomplete = _.last(bk) !== '';
+	if (lastValueIsIncomplete) {
+		// if have value
+		this.buffer = _.last(bk);
+		bk.pop();
 	}
 
 	this.countLine(bk);
@@ -67,42 +66,24 @@ GetLine.prototype._transform = function(chunk, encoding, cb) {
 
 
 GetLine.prototype.breakLine = function(chunk) {
-	var bkl_reg = this.newline;
-	var bkl_result = chunk.match(bkl_reg);
-	return bkl_result;
+	return chunk.split(this.newline);
 }
 
 GetLine.prototype.countLine = function(arr) {
 	for(var i = 0; i < arr.length; i++) {
-		if(arr[i] === '') {
-			// a line
-			this.count++;
-			if(this.count === this.lineStart && this.lineStart === 1 && this.lineEnd === undefined) {
-				this.push(arr[i - 1] + this.newline)
-				this.str_arr.push(arr[i - 1] + this.newline)
-				this.end();
-				break;
-			}else if(this.count === this.lineStart && this.lineEnd === undefined && arr[i - 1] === '') {
-				// hit to the start line
-				this.push(arr[i] + this.newline);
-				this.str_arr.push(arr[i] + this.newline);
-				this.end();
-				break;
-			}else if(this.count === this.lineStart && this.lineEnd === undefined && arr[i - 1] !== '') {
-				this.push(arr[i - 1] + this.newline);
-				this.str_arr.push(arr[i - 1] + this.newline);
-				this.end();
-				break;
-			}else if(this.count >= this.lineStart && this.lineEnd !== undefined && this.count <= this.lineEnd && arr[i - 1] === '') {
-				this.push(arr[i] + this.newline);
-				this.str_arr.push(arr[i] + this.newline);
-			}else if(this.count >= this.lineStart && this.lineEnd !== undefined && this.count <= this.lineEnd && arr[i - 1] !== '') {
-				this.push(arr[i - 1] + this.newline);
-				this.str_arr.push(arr[i -1] + this.newline)
-			}else if(this.count > this.lineEnd) {
-				this.end();
-				break;
-			}
+		this.count++;
+
+		if (this.count === this.lineStart && !this.lineEnd) {
+			this.push(arr[i]);
+			this.str_arr.push(arr[i]);
+			this.end();
+			break;
+		} else if (this.count >= this.lineStart && this.count <= this.lineEnd) {
+			this.push(arr[i]);
+			this.str_arr.push(arr[i]);
+		} else if (this.count > this.lineEnd) {
+			this.end();
+			break;
 		}
 	}
 }
