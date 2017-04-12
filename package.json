@@ -1,6 +1,6 @@
 {
   "name": "get-line",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Getting a specific line of data or a range of data, and it is a stream.",
   "main": "index.js",
   "scripts": {
@@ -19,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/chilijung/get-line/issues"
   },
-  "homepage": "https://github.com/chilijung/get-line"
+  "homepage": "https://github.com/chilijung/get-line",
+  "dependencies": {
+    "lodash": "^4.17.4",
+  }
 }
