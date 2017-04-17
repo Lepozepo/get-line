@@ -1,5 +1,4 @@
 var Transform = require('stream').Transform;
-var fs = require('fs');
 var util = require('util');
 var _ = require('lodash');
 
@@ -25,10 +24,9 @@ function GetLine (opts, cb) {
 
 	this.cb = cb;
 
-	this.newline = opts.newline || /\r\n|\n|\r/g;
+	this.newline = opts.newline || /\n|\r\n/g;
 	this.encode = opts.encoding || 'utf8';
 	this.buffer = '';
-	this.str_arr = [];
 
 	if (opts.lines && opts.lines[0] && opts.lines[1] && (opts.lines[0] < opts.lines[1])) {
 		this.lineStart = opts.lines[0];
@@ -75,22 +73,18 @@ GetLine.prototype.countLine = function(arr) {
 
 		if (this.count === this.lineStart && !this.lineEnd) {
 			this.push(arr[i]);
-			this.str_arr.push(arr[i]);
+			this.end();
+			break;
+		} else if (this.count > this.lineEnd) {
 			this.end();
 			break;
 		} else if (this.count >= this.lineStart && this.count <= this.lineEnd) {
 			this.push(arr[i]);
-			this.str_arr.push(arr[i]);
-		} else if (this.count > this.lineEnd) {
-			this.end();
-			break;
 		}
 	}
 }
 
 GetLine.prototype._flush = function(cb) {
-	if(this.cb)
-		this.cb(this.str_arr)
 	this.count = 0;
 	this.buffer = '';
 	cb();
