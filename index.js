@@ -42,10 +42,11 @@ function GetLine (opts, cb) {
 	}
 }
 
-GetLine.prototype._transform = function(chunk, encoding, cb) {
+GetLine.prototype._transform = function (chunk, encoding, cb) {
 	var chunk = chunk.toString(this.encode);
 	if(chunk) {
 		chunk = this.buffer + chunk;
+		this.buffer = '';
 	}
 	var bk = this.breakLine(chunk);
 
