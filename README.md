@@ -1,5 +1,7 @@
 # get-line
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/Lepozepo/get-line.svg)](https://greenkeeper.io/)
+
 Getting a specific line of data or a range of data, and it is a stream. While `get-line` find the range or a specific of data the stream will end itself, cool :).
 
 ## Install
